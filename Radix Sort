@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int MAX = 10000005;
+const int bits = 8 , size = 1 << bits , mask = size - 1;
+int N, A, B, C, v[MAX], aux[MAX];
+void read();
+void print();
+int getBucket(int, int);
+void countSort(int[], int[], int);
+void radixSort();
+int main(){
+    read();
+    radixSort();
+    print();
+    return 0;
+}
+void read(){
+    ifstream f("radixsort.in");
+    f >> N >> A >> B >> C;
+    v[0] = B;
+    for(int i = 1; i < N; ++i)
+        v[i] = (1LL * A * v[i-1] + B) % C;
+}
+void print(){
+    ofstream g("radixsort.out");
+    for(int i = 0; i < N; i+=10)
+        g << v[i] << " ";
+    g << "\n";
+}
+int getBucket(int x,int offset){
+    return (x >> offset) & mask;
+}
+void countSort(int source[], int destination[], int offset){
+    int cnt[size], indx[size];
+    memset(cnt, 0, sizeof cnt);
+    for(int i = 0; i < N; ++i){
+        int val = getBucket(source[i], offset);
+        ++cnt[val];
+    }
+    indx[0] = 0;
+    for(int i = 1; i < size; ++i)
+        indx[i] = cnt[i - 1] + indx[i - 1];
+    for(int i = 0; i < N; ++i){
+        int val = getBucket(source[i], offset);
+        destination[indx[val]++] = source[i];
+    }
+}
+void radixSort(){
+    for (int i = 0; i * bits < 32; ++i)
+        if (i & 1)
+            countSort(aux, v, i * bits);
+        else
+            countSort(v, aux, i * bits);
+}
