@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int MAX = 100005;
+vector<int> graph[MAX];
+bool use[MAX];
+int N, M;
+int x, y;
+int nr = 0;
+void read();
+void dfs(int);
+void print();
+int main(){
+    read();
+    print();
+    return 0;
+}
+void read(){
+    ifstream f("dfs.in");
+    f >> N >> M;
+    for(int i = 1; i<= M; ++i){
+        f >> x >> y;
+        graph[x].push_back(y);
+        graph[y].push_back(x);
+    }
+}
+void dfs(int node){
+    use[node] = true;
+    for(int x : graph[node])
+        if(!use[x])
+          dfs(x);
+}
+void print(){
+    ofstream g("dfs.out");
+    for(int i = 1; i <= N; ++i)
+        if(!use[i]){
+            ++nr;
+            dfs(i);
+        }
+    g << nr;
+}
