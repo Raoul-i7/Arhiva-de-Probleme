@@ -1,0 +1,57 @@
+#include <fstream>
+using namespace std;
+const int MAX = 32005;
+int N, v[MAX], w[MAX];
+ofstream g("invsort.out");
+void read();
+void merge(int, int);
+void solve(int, int, int);
+int main(){
+  read();
+  solve(1, N, 14);
+  return 0;
+}
+void merge(int l, int r){
+  if(l < r){
+      int mid = (l + r) / 2;
+      merge(l, mid);
+      merge(mid + 1, r);
+      int i = l, j = r;
+      while(i <= r and w[i] == 0)
+        i++;
+      while(j >= l and w[j] == 1)
+        j--;
+        if(i < j){
+            g << i << ' ' << j << "\n";
+            for(; i < j; ++i, --j){
+                swap(w[i], w[j]);
+                swap(v[i], v[j]);
+                }
+            }
+      }
+  else
+    return;
+}
+void solve(int l, int r, int bit) {
+  if(bit == -1)
+    return;
+  int cnt = 0;
+  for(int i = l; i <= r; ++i)
+    if(((1 << bit) & v[i]) == 1)
+      w[i] = 1;
+    else{
+      w[i] = 0;
+      ++cnt;
+    }
+  merge(l, r);
+  if(cnt > 0)
+    solve(l, l + cnt - 1, bit - 1);
+  if(cnt != r - l + 1)
+    solve(l + cnt, r, bit - 1);
+}
+void read(){
+  ifstream f("invsort.in");
+  f >> N;
+  for(int i = 1; i <= N; ++i)
+    f >> v[i];
+}
