@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int MAX = 100005;
+int N, M, Start, x, y, dist[MAX];
+queue<int> q;
+vector<int> graph[MAX];
+void read();
+void print();
+void bfs(int);
+int main(){
+    read();
+    bfs(Start);
+    print();
+    return 0;
+}
+void bfs(int start){
+    fill(dist + 1, dist + N + 1, -1);
+    //memset(dist,-1,sizeof(dist));
+    q.push(start);
+    dist[start] = 0;
+    while(!q.empty()){
+        int node = q.front();
+        q.pop();
+        for (int x : graph[node])
+            if(dist[x] == -1){
+                q.push(x);
+                dist[x] = dist[node] + 1;
+            }
+    }
+}
+void read(){
+    ifstream f("bfs.in");
+    f >> N >> M >> Start;
+    for(int i = 1; i<= M; ++i){
+        f >> x >> y;
+        graph[x].push_back(y);
+    }
+}
+void print(){
+    ofstream g("bfs.out");
+    for(int i = 1; i <= N; ++i)
+        g << dist[i] << ' ';
+}
