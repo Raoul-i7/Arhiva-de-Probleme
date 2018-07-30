@@ -1,0 +1,83 @@
+#include <fstream>
+std::ifstream f("maxq.in");
+std::ofstream g("maxq.out");
+const int MAX = 2e5;
+int N, M, v[MAX + 5];
+struct{
+    int64_t l, r, m, sum;
+}St[4 * MAX + 5];
+void Build(int, int, int);
+void Update(int, int, int, int, int);
+void query(int, int, int, int, int, int64_t&, int64_t&);
+int main(){
+    f >> N;
+    for(int i = 1; i <= N; ++i)
+        f >> v[i];
+    Build(1, 1, N);
+    f >> M;
+    for(int i = 0; i < M; ++i){
+        int quest;
+        f >> quest;
+        int position, value;
+        if(!quest){
+            f >> position >> value;
+            position++;
+            Update(1, 1, N, position, value);
+        }
+        int left, right;
+        if(quest){
+            f >> left >> right;
+            left++; right++;
+            int64_t best = 0, answer = 0;
+            query(1, 1, N, left, right, best, answer);
+            g << answer << "\n";
+        }
+    }
+    return 0;
+}
+void Build(int node, int l, int r){
+    if(l == r){
+        St[node].l = v[l];
+        St[node].m = v[l];
+        St[node].r = v[l];
+        St[node].sum = v[l];
+        return;
+    }
+    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    Build(leftSon, l, mid);
+    Build(rightSon, mid + 1, r);
+    St[node].l = std::max(St[leftSon].l, St[leftSon].sum + St[rightSon].l);
+    St[node].r = std::max(St[rightSon].r, St[leftSon].r + St[rightSon].sum);
+    St[node].m = std::max(std::max(St[leftSon].m, St[rightSon].m), St[leftSon].r + St[rightSon].l);
+    St[node].sum = St[leftSon].sum + St[rightSon].sum;
+}
+void query(int node, int l, int r, int queryL, int queryR, int64_t& best, int64_t& answer){
+    if(queryR < l or r < queryL)
+        return;
+    if(queryL <= l and r <= queryR){
+        answer = std::max(answer, std::max(St[node].m, best + St[node].l));
+        best = std::max(best + St[node].sum,St[node].r);
+        return;
+    }
+    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    query(leftSon, l, mid, queryL, queryR, best, answer);
+    query(rightSon, mid + 1, r, queryL, queryR, best, answer);
+}
+void Update(int node, int l, int r, int pos, int val){
+    if(l == r){
+        St[node].sum = val;
+        St[node].m = val;
+        St[node].r = val;
+        St[node].l = val;
+        return;
+    }
+    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    if(pos <= mid)
+        Update(leftSon, l, mid, pos, val);
+    else
+        Update(rightSon, mid + 1, r, pos, val);
+    St[node].l = std::max(St[leftSon].l, St[leftSon].sum + St[rightSon].l);
+    St[node].r = std::max(St[rightSon].r, St[leftSon].r + St[rightSon].sum);
+    St[node].m = std::max(std::max(St[leftSon].m, St[rightSon].m), St[leftSon].r + St[rightSon].l);
+    St[node].sum = St[leftSon].sum + St[rightSon].sum;
+}
