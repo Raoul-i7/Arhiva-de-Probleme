@@ -1,0 +1,62 @@
+#include <fstream>
+std::ifstream f("arbint.in");
+std::ofstream g("arbint.out");
+const int MAX = 1e5, INF = 0x3f3f3f3f;
+int N, M, v[MAX + 5], St[4 * MAX + 5];
+int query(int, int, int, int, int);
+void update(int, int, int, int, int);
+void Build(int, int, int);
+int main(){
+    f >> N >> M;
+    for(int i = 1; i <= N; ++i)
+        f >> v[i];
+    Build(1, 1, N);
+    int quest;
+    for(int i = 0; i < M; ++i){
+        f >> quest;
+        int x, y;
+        if(!quest){
+            f >> x >> y;
+            g << query(1, 1, N, x, y) << "\n";
+        }
+        int value, position;
+        if(quest){
+            f >> position >> value;
+            update(1, 1, N, position, value);
+        }
+    }
+    return 0;
+}
+void Build(int node, int l, int r){
+    if(l == r){
+        St[node] = v[l];
+        return;
+    }
+    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    Build(leftSon, l, mid);
+    Build(rightSon, mid + 1, r);
+    St[node] = std::max(St[leftSon], St[rightSon]);
+}
+void update(int node, int l, int r, int pos, int val){
+    if(l == r){
+        St[node] = val;
+        return;
+    }
+    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    if(pos <= mid)
+        update(leftSon, l, mid, pos, val);
+    else
+        update(rightSon, mid + 1, r, pos, val);
+    St[node] = std::max(St[leftSon], St[rightSon]);
+}
+int query(int node, int l, int r, int queryL, int queryR){
+    if(queryL <= l and r <= queryR)
+        return St[node];
+    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    int answer = -INF;
+    if(queryL <= mid)
+        answer = std::max(answer, query(leftSon, l, mid, queryL, queryR));
+    if(queryR > mid)
+        answer = std::max(answer, query(rightSon, mid + 1, r, queryL, queryR));
+    return answer;
+}
