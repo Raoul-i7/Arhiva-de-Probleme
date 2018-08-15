@@ -14,10 +14,10 @@ int main(){
     int N;
     f >> N;
     int node = 0;
-    for(int i = 1; i <= N; ++i){
+    for (int i = 1; i <= N; ++i) {
         int quest;
         f >> quest;
-        switch(quest){
+        switch(quest) {
         case 1:
             f >> values[++node];
             addNode(node);
@@ -30,40 +30,40 @@ int main(){
             g << values[heap[1]] << "\n";
         }
     }
-    return 0;
+    return 0x0;
 }
-bool comp(int x, int y){
+bool comp(int x, int y) {
     return values[x] < values[y];
 }
-void swapX(int child, int parent){
+void swapX(int child, int parent) {
     std::swap(heap[child], heap[parent]);
     std::swap(pos[heap[child]], pos[heap[parent]]);
 }
-void upHeap(int child){
+void upHeap(int child) {
     int parent = child >> 1;
     bool var = comp(heap[child], heap[parent]);
-    if(parent and var){
+    if (parent and var) {
         swapX(child,parent);
         upHeap(parent);
     }
 }
-void downHeap(int parent){
+void downHeap(int parent) {
     int child = parent << 1;
     bool var = comp(heap[child + 1], heap[child]);
     bool var2 = child + 1 <= nh;
     child = child + (var and var2);
     bool var3 = comp(heap[child], heap[parent]);
-    if(child <= nh and var3){
+    if (child <= nh and var3) {
         swapX(parent, child);
         downHeap(child);
     }
 }
-void addNode(int node){
+void addNode(int node) {
     heap[++nh] = node;
     pos[node] = nh;
     upHeap(pos[node]);
 }
-void delNode(int node){
+void delNode(int node) {
     swapX(node, nh);
     pos[heap[nh]] = 0;
     heap[nh--] = 0;
