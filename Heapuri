@@ -1,6 +1,7 @@
 #include <fstream>
+const std::string programName = "heapuri";
 const int MAX = 2e5;
-int N, quest, node, nh, values[MAX + 5], heap[MAX + 5], pos[MAX + 5];
+int nh, values[MAX + 5], heap[MAX + 5], pos[MAX + 5];
 bool comp(int, int);
 void swapX(int, int);
 void upHeap(int);
@@ -8,10 +9,13 @@ void downHeap(int);
 void addNode(int);
 void delNode(int);
 int main(){
-    std::ifstream f("heapuri.in");
-    std::ofstream g("heapuri.out");
+    std::ifstream f(programName + ".in");
+    std::ofstream g(programName + ".out");
+    int N;
     f >> N;
+    int node = 0;
     for(int i = 1; i <= N; ++i){
+        int quest;
         f >> quest;
         switch(quest){
         case 1:
