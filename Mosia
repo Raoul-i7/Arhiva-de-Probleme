@@ -32,14 +32,13 @@ int main() {
         Dynamic2[i] = v[i].d * dist(v[i - 1], v[i + 1]) / 2.0;
     Dynamic[1] = Dynamic2[1];
     //double max = 0;
-    //solve(Dynamic, Dynamic2, 1, N , max);
+    //solve(Dynamic, Dynamic2, 0, N, max);
     for(int i = 2; i < N; ++i)
-        Dynamic[i] = std::max(Dynamic[i - 1], Dynamic[i - 2] + Dynamic2[i]);
+       Dynamic[i] = std::max(Dynamic[i - 1], Dynamic[i - 2] + Dynamic2[i]);
     double result = Dynamic[N - 1];
     //max = std::max(max, Dynamic[N - 1]);
-    Dynamic2[1] = 0;
-    Dynamic[1] = 0;
-    //solve(Dynamic, Dynamic2, 2, N, max);
+    Dynamic2[1] = Dynamic[1] = 0;
+    //solve(Dynamic, Dynamic2, 1, N, max);
     for(int i = 2; i <= N; ++i)
        Dynamic[i] = std::max(Dynamic[i - 1], Dynamic[i - 2] + Dynamic2[i]);
     g << std::setprecision(4) << std::fixed<< std::max(Dynamic[N], result) << "\n";
@@ -53,7 +52,7 @@ bool comp(Point a, Point b) {
     return atan2(a.x - c.x, a.y - c.y) < atan2(b.x - c.x, b.y - c.y);
 }
 void solve(double dynamic[], double dynamic2[], int start, int end, double& max) {
-    for(int i = start + 2; i <= end; ++i)
+    for(int i = start; i < end; ++i)
         dynamic[i] = std::max(dynamic[i - 1], dynamic[i - 2] + dynamic2[i]);
     max = std::max(max, dynamic[end]);
 }
