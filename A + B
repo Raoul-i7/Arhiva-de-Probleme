@@ -1,0 +1,10 @@
+#include <fstream>
+const std::string programName = "adunare";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+int main() {
+    int A, B;
+    f >> A >> B;
+    g << A + B;
+    return 0x0;
+}
