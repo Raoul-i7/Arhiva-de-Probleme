@@ -1,0 +1,19 @@
+#include <fstream>
+const std::string programName = "cmmdc";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+int cmmdc(int, int);
+int main(){
+    int A, B;
+    f >> A >> B;
+    if (cmmdc(A, B) == 1)
+        g << 0;
+    else
+        g << cmmdc(A, B);
+    return 0x0;
+}
+int cmmdc(int a, int b) {
+    if (!b)
+        return a;
+    cmmdc(b, a%b);
+}
