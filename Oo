@@ -1,0 +1,27 @@
+#include <fstream>
+std::ifstream f("oo.in");
+std::ofstream g("oo.out");
+const int MAX = 1e5;
+void solve(int, int, int&, int[], int[]);
+int main() {
+    int N;
+    f >> N;
+    int v[MAX + 5];
+    for (int i = 1; i <= N; ++i)
+        f >> v[i];
+    int dynamic[MAX + 5];
+    int max = 0;
+    v[N + 1] = v[1];
+    solve(1, N - 1, max, v, dynamic);
+    solve(2, N, max, v, dynamic);
+    solve(3, N + 1, max, v, dynamic);
+    g << max << "\n";
+    return 0x0;
+}
+void solve(int start, int end, int& max, int v[], int dynamic[]) {
+    dynamic[start] = 0;
+    dynamic[start + 1] = v[start] + v[start + 1];
+    for (int i = start + 2; i <= end; ++i)
+        dynamic[i] = std::max(dynamic[i - 1], dynamic[i - 3] + v[i - 1] + v[i]);
+    max = std::max(max, dynamic[end]);
+}
