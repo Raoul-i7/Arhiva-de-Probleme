@@ -1,0 +1,23 @@
+#include<fstream>
+const std::string programName = "aiacucmmdc";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+int main() {
+    int64_t N;
+    f >> N;
+    int64_t P;
+    f >> P;
+    int64_t counter = 0, subsequence = 0;
+    for(int i = 1; i <= N; ++i) {
+        int64_t nr;
+        f >> nr;
+        if(!(nr % P)) {
+            ++counter;
+            subsequence += counter;
+        }
+        else
+            counter = 0;
+    }
+    g << subsequence;
+    return 0x0;
+}
