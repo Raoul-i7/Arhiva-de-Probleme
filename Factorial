@@ -1,0 +1,31 @@
+  #include <fstream>
+const std::string programName = "fact";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+int nr(int);
+void binary(int, int, int);
+int main() {
+    int P;
+    f >> P;
+    binary(1, 1e9, P);
+    return 0x0;
+}
+int nr(int k) {
+    int cnt = 0;
+    for (int i = 5; i <= k; i *= 5)
+        cnt += k/i;
+    return cnt;
+}
+void binary(int left, int right, int P) {
+    while (left < right) {
+        int mid = (left + right) >> 1;
+        if (nr(mid) >= P)
+            right = mid;
+        else
+            left = mid + 1;
+    }
+    if (nr(left) == P)
+         g << left;
+    else
+        g << -1;
+}
