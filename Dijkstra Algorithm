@@ -37,8 +37,7 @@ void Dijkstra(int Node) {
     for (int i = 1; i <= N; ++i) {
         min = INF;
         for (int j = 1; j <= N; ++i)
-            if (!use[j])
-                if (Dist[j] < min)
+                if (!use[j] and Dist[j] < min)
                     min = Dist[j], pmin = j;
             use[pmin] = true;
             for (auto edge : Graph[Node])
