@@ -1,0 +1,48 @@
+#include <fstream>
+#include <vector>
+const std::string programName = "djkstra";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+const int MAX = 5e4, INF = 0x3f3f3f3f;
+int N, M, Dist[MAX + 5];
+bool use[MAX + 5];
+std::vector < std::pair <int, int> > Graph[MAX + 5];
+void read();
+void print();
+void Dijkstra(int);
+int main() {
+    read();
+    Dijkstra(1);
+    print();
+    return 0x0;
+}
+void read() {
+    f >> N >> M;
+    for (int i = 1; i <= M; ++i) {
+        int x, y, c;
+        f >> x >> y >> c;
+        Graph[x].emplace_back(y, c);
+    }
+}
+void print() {
+    for (int i = 1; i < N; ++i)
+        g << (Dist[i] == INF ? 0 : Dist[i]) << ' ';
+    g << "\n";
+}
+void Dijkstra(int Node) {
+    for (int i = 2; i <= N; ++i)
+        Dist[i] = INF;
+    Dist[1] = 0;
+    int min, pmin = 0;
+    for (int i = 1; i <= N; ++i) {
+        min = INF;
+        for (int j = 1; j <= N; ++i)
+            if (!use[j])
+                if (Dist[j] < min)
+                    min = Dist[j], pmin = j;
+            use[pmin] = true;
+            for (auto edge : Graph[Node])
+                if(Dist[edge.second] > Dist[Node] + edge.second)
+                    Dist[edge.second] = Dist[Node] + edge.second;
+    }
+}
