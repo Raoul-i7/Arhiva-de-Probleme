@@ -1,13 +1,14 @@
 #include <fstream>
-std::ifstream f("sequencequery.in");
-std::ofstream g("sequencequery.out");
+const std::string programName = "sequencequery";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
 const int MAX = 1e5;
 const int64_t INF = 1e18;
 int N, M, v[MAX + 5];
 void query(int, int, int, int, int, int64_t&, int64_t&);
 void Build(int, int, int);
 struct{
-    int64_t l, r, m, sum;
+    int64_t left, right, mid, sum;
 }St[4 * MAX + 5];
 int main(){
     f >> N >> M;
@@ -23,31 +24,31 @@ int main(){
     }
     return 0;
 }
-void Build(int node, int l, int r){
-    if(l == r){
-        St[node].l = v[l];
-        St[node].r = v[l];
-        St[node].m = v[l];
-        St[node].sum = v[l];
+void Build(int node, int left, int right){
+    if(left == right){
+        St[node].left = v[left];
+        St[node].right = v[left];
+        St[node].mid = v[left];
+        St[node].sum = v[left];
         return;
     }
-    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
-    Build(leftSon, l, mid);
-    Build(rightSon, mid + 1, r);
+    int mid = (left + right) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    Build(leftSon, left, mid);
+    Build(rightSon, mid + 1, right);
     St[node].sum = St[leftSon].sum + St[rightSon].sum;
-    St[node].l = std::max(St[leftSon].l, St[leftSon].sum + St[rightSon].l);
-    St[node].r = std::max(St[rightSon].r, St[leftSon].r + St[rightSon].sum);
-    St[node].m = std::max(std::max(St[leftSon].m, St[rightSon].m), St[leftSon].r + St[rightSon].l);
+    St[node].left = std::max(St[leftSon].left, St[leftSon].sum + St[rightSon].left);
+    St[node].right = std::max(St[rightSon].right, St[leftSon].right + St[rightSon].sum);
+    St[node].mid = std::max(std::max(St[leftSon].mid, St[rightSon].mid), St[leftSon].right + St[rightSon].left);
 }
-void query(int node, int l, int r, int queryL, int queryR, int64_t& best, int64_t& answer){
-    if(queryR < l or r < queryL)
+void query(int node, int left, int right, int queryL, int queryR, int64_t& best, int64_t& answer){
+    if(queryR < left or right < queryL)
         return;
-    if(queryL <= l and r <= queryR){
-        answer = std::max(answer, std::max(St[node].m, best + St[node].l));
-        best = std::max(best + St[node].sum, St[node].r);
+    if(queryL <= left and right <= queryR){
+        answer = std::max(answer, std::max(St[node].mid, best + St[node].left));
+        best = std::max(best + St[node].sum, St[node].right);
         return;
     }
-    int mid = (l + r) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
-    query(leftSon, l, mid, queryL, queryR, best, answer);
-    query(rightSon, mid + 1, r, queryL, queryR, best, answer);
+    int mid = (left + right) / 2, leftSon = 2 * node, rightSon = leftSon + 1;
+    query(leftSon, left, mid, queryL, queryR, best, answer);
+    query(rightSon, mid + 1, right, queryL, queryR, best, answer);
 }
