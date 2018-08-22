@@ -1,11 +1,13 @@
-#include <bits/stdc++.h>
-using namespace std;
-const int MAX = 100005;
-vector<int> graph[MAX];
-bool use[MAX];
+#include <fstream>
+#include <vector>
+const std::string programName = "dfs";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+const int MAX = 1e5;
+std::vector<int> Graph[MAX + 5];
+bool use[MAX + 5];
 int N, M;
-int x, y;
-int nr = 0;
+int nr;
 void read();
 void dfs(int);
 void print();
@@ -14,25 +16,24 @@ int main(){
     print();
     return 0;
 }
-void read(){
-    ifstream f("dfs.in");
+void read() {
     f >> N >> M;
-    for(int i = 1; i<= M; ++i){
+    for (int i = 1; i <= M; ++i) {
+        int x, y;
         f >> x >> y;
-        graph[x].push_back(y);
-        graph[y].push_back(x);
+        Graph[x].push_back(y);
+        Graph[y].push_back(x);
     }
 }
-void dfs(int node){
+void dfs(int node) {
     use[node] = true;
-    for(int x : graph[node])
-        if(!use[x])
+    for (int x : Graph[node])
+        if (!use[x])
           dfs(x);
 }
-void print(){
-    ofstream g("dfs.out");
-    for(int i = 1; i <= N; ++i)
-        if(!use[i]){
+void print() {
+    for (int i = 1; i <= N; ++i)
+        if (!use[i]) {
             ++nr;
             dfs(i);
         }
