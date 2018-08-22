@@ -36,7 +36,7 @@ int main(){
             g << QuerySearch(N, pw2, value, aib) << "\n";
         }
     }
-    return 0;
+    return 0x0;
 }
 int Query(int pos, int aib[]) {
     int ans = 0;
