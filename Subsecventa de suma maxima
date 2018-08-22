@@ -1,4 +1,4 @@
-  #include <fstream>
+#include <fstream>
 #include <climits>
 const std::string programName = "ssm";
 std::ifstream f(programName + ".in");
