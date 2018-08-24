@@ -1,0 +1,11 @@
+#include <fstream>
+const std::string programName = "suma";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+int main() {
+    int64_t N, MOD;
+    f >> N >> MOD;
+    N %= MOD;
+    g << ((N * (N - 1) * (N + 1)) / 3) % MOD;
+    return 0x0;
+}
