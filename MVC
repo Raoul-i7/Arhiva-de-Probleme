@@ -1,0 +1,88 @@
+#include <fstream>
+#include <vector>
+const std::string programName = "mvc";
+std::ifstream f(programName + ".in");
+std::ofstream g(programName + ".out");
+const int MAX = 1e5, INF = 0x3f3f3f3f;
+bool use[MAX + 5];
+int cost[MAX + 5], dads[MAX + 5], Dynam1c[MAX + 5][2], Dynamic2[MAX + 5][2];
+std::vector <int> Graph[MAX + 5], cicle;
+void Read(int&);
+void DFSSolve(int);
+void DFSBuild(int);
+void GetCicle();
+void GetSolution();
+void Solve(int&);
+int main() {
+    int N;
+    Read(N);
+    GetCicle();
+    int solution;
+    Solve(solution);
+    g << solution << "\n";
+    return 0x0;
+}
+void Read(int& N) {
+    f >> N;
+    for (int i = 1; i <= N; ++i)
+        f >> cost[i];
+    for (int i = 1; i <= N; ++i) {
+        int x, y;
+        f >> x >> y;
+        Graph[x].push_back(y);
+        Graph[y].push_back(x);
+    }
+}
+void DFSSolve(int Node) {
+    use[Node] = false;
+    Dynam1c[Node][0] = 0;
+    Dynam1c[Node][1] = cost[Node];
+    for (int edge : Graph[Node]) {
+        if (use[edge]) {
+            DFSSolve(edge);
+            Dynam1c[Node][0] += Dynam1c[edge][1];
+            Dynam1c[Node][1] += std::min(Dynam1c[edge][0], Dynam1c[edge][1]);
+        }
+    }
+}
+void DFSBuild(int Node) {
+    use[Node] = true;
+    for (int son : Graph[Node]) {
+        if (use[son]) {
+            if (son != dads[Node] and cicle.empty()) {
+                int temp = Node;
+                while (temp != son) {
+                    cicle.push_back(temp);
+                    temp = dads[temp];
+                }
+                cicle.push_back(son);
+            }
+            continue;
+        }
+        dads[son] = Node;
+        DFSBuild(son);
+    }
+}
+void GetCicle() {
+    DFSBuild(1);
+    for (int edge : cicle)
+        use[edge] = false;
+}
+void GetSolution() {
+    for (size_t i = 1; i < cicle.size(); ++i) {
+        Dynamic2[cicle[i]][0] = Dynamic2[cicle[i - 1]][1] + Dynam1c[cicle[i]][0];
+        Dynamic2[cicle[i]][1] = std::min(Dynamic2[cicle[i - 1]][0], Dynamic2[cicle[i - 1]][1]) + Dynam1c[cicle[i]][1];
+    }
+}
+void Solve(int& solution) {
+    for (int edge : cicle)
+        DFSSolve(edge);
+    Dynamic2[cicle[0]][0] = INF;
+    Dynamic2[cicle[0]][1] = Dynam1c[cicle[0]][1];
+    GetSolution();
+    solution = std::min(Dynamic2[cicle.back()][0], Dynamic2[cicle.back()][1]);
+    Dynamic2[cicle[0]][0] = Dynam1c[cicle[0]][0];
+    Dynamic2[cicle[0]][1] = Dynam1c[cicle[0]][1];
+    GetSolution();
+    solution = std::min(solution, Dynamic2[cicle.back()][1]);
+}
