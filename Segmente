@@ -1,0 +1,81 @@
+#include <fstream>
+#include <cmath>
+#include <vector>
+#include <iomanip>
+const std :: string programName = "seg";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+const int MAX = 17;
+const double INF = 0x3f3f3f3f;
+struct Point{
+    double abscissa, ordinate;
+}segment[MAX][2];
+int N;
+//std::vector <int> CONF[1 << MAX];
+double Cost[MAX][2][MAX][2];
+double Best[1 << MAX][MAX][2];
+double distance(Point, Point);
+double result();
+void solve(int, int, int);
+int main() {
+    int T;
+    f >> T;
+    g << std :: setprecision(6) << std :: fixed;
+    while (T--)
+        g << result() << "\n";
+    return 0x0;
+}
+double distance(Point a, Point b) {
+    double absc1ssa = a.abscissa - b.abscissa;
+    double ordonate1 = a.ordinate - b.ordinate;
+    return sqrt(absc1ssa * absc1ssa + ordonate1 * ordonate1);
+}
+double result() {
+    f >> N;
+    --N;
+    /*
+    for (int conf = 0; conf < (1 << N); ++conf) {
+        CONF[conf].clear();
+        for (int last = 0; last < N; ++last)
+            if(conf  & (1 << last))
+                CONF[conf].push_back(last);
+    }
+    */
+    for (int i = 0; i <= N; ++i)
+        for (int j = 0; j < 2; ++j)
+            f >> segment[i][j].abscissa >> segment[i][j].ordinate;
+
+    for (int i = 0; i <= N; ++i)
+        for (int j = 0; j < 2; ++j)
+            for (int k = 0; k <= N; ++k)
+                for (int l = 0; l < 2; ++l)
+                    Cost[i][j][k][l] = distance(segment[i][j], segment[k][l]);
+
+    for (int conf = 1; conf < (1 << N); ++conf)
+//        for (auto it : CONF[conf])
+        for (int last = 0; last < N; ++last)
+            if (conf & (1 <<last))
+                for (int bit = 0; bit < 2; ++bit)
+                    solve(conf, last, bit);
+
+    double answer = INF;
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < 2; ++j)
+            answer = std :: min(answer, Best[(1 << N) - 1][i][j] + Cost[i][j][N][0]);
+    return answer;
+}
+void solve(int conf, int last, int bit) {
+    if ((conf ^ (1 << last)) == 0) {
+        Best[conf][last][bit] = Cost[N][1][last][bit ^ 1];
+        return;
+    }
+    else {
+        Best[conf][last][bit]  = INF;
+        int previous = conf ^ (1 << last);
+        //for (auto it : CONF[previous])
+            for (int i = 0; i < N; ++i)
+                if (previous & (1 << i))
+                    for (int j = 0; j < 2; ++j)
+                        Best[conf][last][bit]  = std::min(Best[conf][last][bit], Best[previous][i][j] + Cost[last][bit ^ 1][i][j]);
+    }
+}
