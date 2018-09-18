@@ -1,0 +1,56 @@
+#include <fstream>
+#include <queue>
+const std :: string programName = "alee";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+const int NMAX = 18E1;
+int park[NMAX + 5][NMAX + 5];
+int N, M, startX, startY, stopX, stopY;
+int OX[4] = {1, -1, 0, 0};
+int OY[4] = {0, 0, 1, -1};
+std :: queue < std :: pair <int, int> > v;
+void read(void);
+bool inMatrix(int, int);
+void lee(void);
+int main() {
+    read();
+    lee();
+    g << park[stopX][stopY];
+    return 0x0;
+}
+void read(void) {
+    f >> N >> M;
+    while (M--) {
+        int line, column;
+        f >> line >> column;
+        park[line][column] = -1;
+    }
+    f >> startX >> startY;
+    f >> stopX >> stopY;
+}
+bool inMatrix(int i, int j) {
+    if (i < 1 or j < 1 or i > N or j > N)
+        return false;
+    if (park[i][j] == -1)
+        return false;
+    return true;
+}
+void lee(void) {
+    park[startX][startY] = 1;
+    v.push({startX, startY});
+    while (!v.empty()) {
+        int x, y;
+        x = v.front().first;
+        y = v.front().second;
+        v.pop();
+        for (int i = 0; i < 4; ++i) {
+            int newX, newY;
+            newX = x + OX[i];
+            newY = y + OY[i];
+            if (inMatrix(newX, newY) and park[newX][newY] < 1) {
+                park[newX][newY] = park[x][y] + 1;
+                v.push({newX, newY});
+            }
+        }
+    }
+}
