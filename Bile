@@ -1,0 +1,101 @@
+#include <fstream>
+#include <vector>
+const std :: string programName = "bile";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+const int NMAX = 25E1 + 5;
+int dx[4] = {-1, 0, 1, 0};
+int dy[4] = {0, 1, 0, -1};
+int N, max = 1, cardinal[NMAX * NMAX], rang[NMAX * NMAX], tati[NMAX * NMAX], answer[NMAX * NMAX];
+bool Matrix[NMAX][NMAX];
+std :: vector < std :: pair <int, int> > v;
+
+void initialize(void);
+void read(void);
+void solve(void);
+void print(void);
+
+int find(int);
+int Union(int, int);
+int F(int, int);
+bool in_matrice(int, int);
+void fill(int, int);
+
+int main(void) {
+    initialize();
+    read();
+    solve();
+    print();
+    return 0x0;
+}
+void initialize(void) {
+    f >> N;
+    v.reserve(N * N);
+    for (int i = 1; i <= N * N; ++i){
+        tati[i] = i;
+        rang[i] = 1;
+        cardinal[i] = 1;
+    }
+}
+void read(void) {
+    for (int i = 1; i <= N * N; ++i){
+        int line, column;
+        f >> line >> column;
+        v.emplace_back(line, column);
+    }
+}
+void solve(void) {
+    for (int i = N * N - 1; i >= 0; --i){
+            Matrix[v[i].first][v[i].second] = true;
+            fill(v[i].first,v[i].second);
+            answer[i] = max;
+        }
+}
+void print(void) {
+    for (int i = 1; i <= N * N; ++i)
+            g << answer[i] << "\n";
+}
+int find(int leaf) {
+    int root = leaf;
+    while (root != tati[root])
+        root = tati[root];
+
+    while (leaf != tati[leaf]) {
+        int Xcopy = tati[leaf];
+        tati[leaf] = root;
+        leaf = Xcopy;
+    }
+    return root;
+}
+int Union(int leaf, int leaf2) {
+    if (leaf == leaf2)
+        return 0;
+    if (rang[leaf] > rang[leaf2]) {
+        cardinal[leaf] += cardinal[leaf2];
+        max = std :: max(max, cardinal[leaf]);
+        tati[leaf2] = leaf;
+    } else if (rang[leaf2] >= rang[leaf]) {
+        cardinal[leaf2] += cardinal[leaf];
+        max = std :: max(max, cardinal[leaf2]);
+        tati[leaf] = leaf2;
+    } if (rang[leaf] == rang[leaf2])
+        rang[leaf2]++;
+    return 0;
+}
+int F(int x, int y) {
+    return (x - 1) * N + y;
+}
+bool in_matrice(int x, int y) {
+    if (x >= 1 and x <= N and y >= 1 and y <= N and Matrix[x][y])
+        return true;
+    return false;
+}
+void fill(int x, int y) {
+    int newX, newY;
+    for (int i = 0; i < 4; i++) {
+        newX = x + dx[i];
+        newY = y + dy[i];
+        if (in_matrice(newX, newY))
+            Union(find(F(x, y)), find(F(newX, newY)));
+    }
+}
