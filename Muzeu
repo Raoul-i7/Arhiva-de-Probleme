@@ -3,27 +3,20 @@
 const std :: string programName = "muzeu";
 std :: ifstream f(programName + ".in");
 std :: ofstream g(programName + ".out");
-const int NMAX = 260;
-int OX[4] = {-1, 0, 1, 0};
-int OY[4] = {0, 1, 0, -1};
+const int NMAX = 3000;
+int OX[] = {0, 0, 1, -1};
+int OY[] = {-1, 1, 0, 0};
 int N, Matrix[NMAX][NMAX];
 std :: queue < std :: pair <int, int> > q;
-void border(void);
+bool inMatrix(int, int);
 void read(void);
 void lee(void);
-void assignement(void);
 void print(void);
 int main(void) {
     read();
-    border();
     lee();
-    assignement();
     print();
     return 0x0;
-}
-void border(void) {
-    for (int i = 0; i <= N + 1; ++i)
-        Matrix[i][0] = Matrix[i][N + 1] = Matrix[0][i] = Matrix[N + 1][i] = -1;
 }
 void read(void) {
     f >> N;
@@ -32,9 +25,12 @@ void read(void) {
             char c;
             f >> c;
             switch(c) {
-                case 'P':
-                    Matrix[i][j] = -3;
-                    q.push({i, j});
+                case 'P' :
+                    Matrix[i][j] = 0;
+                    q.emplace(i, j);
+                    break;
+                case '.' :
+                    Matrix[i][j] = -1;
                     break;
                 case '#' :
                     Matrix[i][j] = -2;
@@ -44,39 +40,29 @@ void read(void) {
 }
 void lee(void) {
     while (!q.empty()) {
-        int x, y;
-        x = q.front().first;
-        y = q.front().second;
+        auto current = q.front();
         q.pop();
+        int x = current.first;
+        int y = current.second;
         for (int i = 0; i < 4; ++i) {
-            int newX, newY;
-            newX = x + OX[i];
-            newY = y + OY[i];
-            if (Matrix[newX][newY] == 0) {
-                if (Matrix[x][y] == -3) {
-                    Matrix[newX][newY] = 1;
-                    q.push({newX, newY});
-                } else {
-                    Matrix[newX][newY] = Matrix[x][y] + 1;
-                    q.push({newX, newY});
-                }
+            int newX = x + OX[i];
+            int newY = y + OY[i];
+            if (((Matrix[newX][newY] > Matrix[x][y] + 1) or Matrix[newX][newY] == -1) and inMatrix(newX, newY)){
+                Matrix[newX][newY] = Matrix[x][y] + 1;
+                q.emplace(newX, newY);
             }
         }
     }
 }
-void assignement(void) {
-    for (int i = 1; i <= N; ++i)
-        for (int j = 1; j <= N; ++j)
-            if (Matrix[i][j] == 0)
-                Matrix[i][j] = -1;
-}
 void print(void) {
     for (int i = 1; i <= N; ++i) {
         for (int j = 1; j <= N; ++j)
-            if (Matrix[i][j] == -3)
-                g << '0';
-            else
-                g << Matrix[i][j] << ' ';
+            g << Matrix[i][j] << ' ';
         g << "\n";
     }
+}
+bool inMatrix(int i, int j) {
+    if (i < 1 or i > N or j < 1 or j > N or Matrix[i][j] == -2)
+        return false;
+    return true;
 }
