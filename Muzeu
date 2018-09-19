@@ -4,8 +4,6 @@ const std :: string programName = "muzeu";
 std :: ifstream f(programName + ".in");
 std :: ofstream g(programName + ".out");
 const int NMAX = 3000;
-int OX[] = {0, 0, 1, -1};
-int OY[] = {-1, 1, 0, 0};
 int N, Matrix[NMAX][NMAX];
 std :: queue < std :: pair <int, int> > q;
 bool inMatrix(int, int);
@@ -39,6 +37,8 @@ void read(void) {
     }
 }
 void lee(void) {
+    int OX[] = {0, 0, 1, -1};
+    int OY[] = {-1, 1, 0, 0};
     while (!q.empty()) {
         auto current = q.front();
         q.pop();
