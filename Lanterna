@@ -1,0 +1,99 @@
+// 70 puncte
+#include <fstream>
+#include <queue>
+#include <cstring>
+ 
+const int NMAX = 55, WMAX = 1005, INF = 0x3f3f3f3f;
+ 
+std :: ifstream fin("lanterna.in");
+std :: ofstream fout("lanterna.out");
+ 
+int N, K, M, fr[NMAX], dist[NMAX][WMAX], dist_min;
+ 
+struct Edge {
+    int nb, cost, watt;
+    Edge(int n, int d, int w) {
+        nb = n;
+        cost = d;
+        watt = w;
+    }
+};
+std :: vector<Edge> G[NMAX];
+struct HeapMember {
+    int node, watt, cost;
+    HeapMember(int n, int w, int c) {
+        node = n;
+        watt = w;
+        cost = c;
+    }
+    bool operator<(const HeapMember &other) const {
+        return cost > other.cost;
+    }
+};
+std :: priority_queue<HeapMember> Q;
+ 
+int Dijkstra(int);
+void read(void);
+void binary_search(void);
+ 
+int main(void) {
+    read();
+    binary_search();
+    return 0X0;
+}
+ 
+int Dijkstra(int k) {
+    memset(dist, INF, sizeof dist);
+    dist[1][k] = 0;
+    Q.push(HeapMember(1, k, 0));
+    while (!Q.empty()) {
+        int node = Q.top().node;
+        int watt = Q.top().watt;
+        int cost = Q.top().cost;
+        Q.pop();
+        if (cost != dist[node][watt])
+            continue;
+        for (auto it : G[node]) {
+            int new_watt = watt - it.watt;
+            int new_cost = cost + it.cost;
+            if (new_watt < 0)
+                continue;
+            if (fr[it.nb])
+                new_watt = k;
+            if (new_cost < dist[it.nb][new_watt]) {
+                dist[it.nb][new_watt] = new_cost;
+                Q.push(HeapMember(it.nb, new_watt, new_cost));
+            }
+        }
+    }
+    int sol = INF;
+    for (int i = 0; i <= k; ++i)
+        sol = std :: min(sol, dist[N][i]);
+    return sol;
+}
+ 
+void read(void) {
+    fin >> N >> K;
+    for (int i = 1; i <= N; ++i)
+        fin >> fr[i];
+    fin >> M;
+    while (M--) {
+        int x, y, cost, watt;
+        fin >> x >> y >> cost >> watt;
+        G[x].push_back(Edge(y, cost, watt));
+        G[y].push_back(Edge(x, cost, watt));
+    }
+}
+ 
+void binary_search() {
+    dist_min = Dijkstra(K);
+    int l = 1, r = K - 1;
+    while (l <= r) {
+        int m = (l + r) >> 1;
+        if (Dijkstra(m) > dist_min)
+            l = m + 1;
+        else
+            r = m - 1;
+    }
+    fout << dist_min << " " << l << "\n";
+}
