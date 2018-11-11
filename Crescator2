@@ -1,0 +1,40 @@
+#include <fstream>
+#include <cstring>
+const std::string programName = "crescator2";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+const int NMAX = 5E4 + 5, MODULO = 700001, SQRT = 220;
+int s, dynamic[NMAX], dynamic2[2][NMAX], answer;
+inline void Add(int& a, int b) { a = (a + b) % MODULO; }
+inline int Prod(int a, int b) { return int64_t(a) * b % MODULO; }
+int main(void) {
+	f >> s;
+	dynamic[0] = 1;
+ 
+	for (int i = 1; i <= std :: min(s, SQRT); ++i)
+		for (int j = 1; j <= s; ++j)
+			Add(dynamic[j], dynamic[j - i]);	
+ 
+	for (int i = 1; i <= s; ++i)
+		Add(dynamic[i], dynamic[i - 1]);
+ 
+	answer = dynamic[s];
+ 
+	dynamic2[0][0] = 1;
+ 
+	for (int i = 1; i <= s / SQRT; ++i) {
+		int current = i & 1, previous = current ^ 1;
+		memcpy(dynamic2[current], dynamic2[previous], sizeof dynamic2[current]);
+ 
+		for (int j = i; j <= s; ++j)
+			Add(dynamic2[current][j], dynamic2[current][j - i]);
+		int dif = i * (SQRT + 1);
+ 
+		for (int j = dif; j <= s; ++j)
+			Add(answer, Prod(dynamic[s - j], dynamic2[current][j - dif]));
+	}
+ 
+	Add(answer, MODULO - 1);
+	g << answer << '\n';
+	return 0x0;
+}
