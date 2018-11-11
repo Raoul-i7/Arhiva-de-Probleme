@@ -1,0 +1,52 @@
+#include <fstream>
+
+const std :: string programName = "stramosi";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+
+const int NMAX = 25E4;
+
+int N, M, Log2[NMAX + 5], tati[20][NMAX + 5];
+
+void read(void);
+void solve(void);
+int Ancestor(int, int);
+void Precalculate(void);
+
+int main(void) {
+    read();
+    Precalculate();
+    solve();
+    return 0x0;
+}
+
+void read(void) {
+    f >> N >> M;
+    for (int i = 1; i <= N; ++i)
+        f >> tati[0][i];
+}
+
+void solve() {
+    while (M--) {
+        int Q, P;
+        f >> Q >> P;
+        g << Ancestor(Q, P) << '\n';
+    }
+}
+
+int Ancestor(int Q, int P) {
+    while (P) {
+        int k = Log2[P]; //casting
+        Q = tati[k][Q];
+        P = P - (1 << k);
+    }
+	return Q;
+}
+
+void Precalculate(void) {
+    for (int i = 2; i <= N; ++i)
+        Log2[i] = Log2[i / 2] + 1;
+    for (int i = 1; (1 << i) <= N; ++i)
+        for (int j = 1; j <= N; ++j)
+            tati[i][j] = tati[i - 1][tati[i - 1][j]];
+}
