@@ -1,0 +1,43 @@
+#include <fstream>
+
+const std :: string programName = "morcovi";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+
+const int NMAX = 1E3, PMAX = 12;
+
+int Best[1 << PMAX][NMAX + 5];
+
+int main(void) {
+    int N, Cost[NMAX + 5];
+    f >> N;
+    for (int i = 1; i <= N; ++i) {
+        f >> Cost[i];               // citire si copiere
+        Best[0][i] = Cost[i];
+    }
+ 
+    int P, jumps[PMAX + 1];
+    f >> P;                         //citire
+    for(int i = 1; i <= P; ++i)
+        f >> jumps[i];
+ 
+    int bitP = 1 << P, steps[PMAX + 1];
+    steps[1] = 1;
+    for(int i = 2; i <= 12; ++i)        //initializare pasi
+        steps[i] = steps[i - 1] << 1;
+ 
+    for (int conf = 1; conf < bitP; ++conf)
+        for (int Xmove = 1; Xmove <= P; ++Xmove)
+            if (steps[Xmove] & conf)
+                for (int area = 1; area <= N; ++area) {
+                    if (area > jumps[Xmove])
+                        Best[conf][area] = std :: max(Best[conf][area], Best[conf - steps[Xmove]][area - jumps[Xmove]] + Cost[area]);
+                    if (area <= N - jumps[Xmove])
+                        Best[conf][area] = std :: max(Best[conf][area], Best[conf - steps[Xmove]][area + jumps[Xmove]] + Cost[area]);
+                }
+    --bitP;
+    for(int i = 2; i <= N; ++i)
+        Best[bitP][i] = std :: max(Best[bitP][i], Best[bitP][i - 1]);
+    g << Best[bitP][N] << "\n";
+    return 0x0;
+}
