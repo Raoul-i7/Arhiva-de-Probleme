@@ -1,0 +1,38 @@
+//
+//  Div3.cpp
+//  
+//
+//  Created by Raoul Bocancea on 18/11/2018.
+//
+
+#include <fstream>
+
+const std :: string programName = "div3";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+
+const int MOD = 4001;
+
+int N, K, figure, dp[3][10005];
+
+int main(void) {
+    f >> N >> K;
+    
+    while (N--) {
+        f >> figure;
+        ++dp[figure % 3][1];
+    }
+    
+    for (int i = 2; i <= K; ++i) {
+        
+        dp[0][i] = dp[0][i - 1] * dp[0][1] + dp[2][i - 1] * dp[1][1] + dp[1][i - 1] * dp[2][1];
+        dp[1][i] = dp[1][i - 1] * dp[0][1] + dp[0][i - 1] * dp[1][1] + dp[2][i - 1] * dp[2][1];
+        dp[2][i] = dp[2][i - 1] * dp[0][1] + dp[1][i - 1] * dp[1][1] + dp[0][i - 1] * dp[2][1];
+        
+        dp[0][i] %= MOD;
+        dp[1][i] %= MOD;
+        dp[2][i] %= MOD;
+    }
+    g << dp[0][K];
+    return 0x0;
+}
