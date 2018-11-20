@@ -1,0 +1,38 @@
+//
+//  Cifra.cpp
+//  
+//
+//  Created by Raoul Bocancea on 20/11/2018.
+//
+
+#include <fstream>
+
+const std :: string programName = "cifra";
+std :: ifstream f (programName + ".in");
+std :: ofstream g (programName + ".out");
+
+int main(void) {
+    int v[105] = {0};
+    v[1] = 1;
+    for (int i = 2; i <= 100 ; ++i) {
+        int sol = 1, Xcopy = i;
+        for (int j = 0; (1 << j) <= i; ++j) {
+            if ((1 << j) & i)
+                sol = (sol * Xcopy) % 10;
+            Xcopy = (Xcopy * Xcopy) % 10;
+        }
+        v[i] = (v[i - 1] + sol) % 10;
+    }
+
+    std :: string s;
+    int T;
+    f >> T;
+    while (T--) {
+        f >> s;
+        if (s.size() == 1)
+            g << v[s[0] - '0'] << '\n';
+        else
+            g << v[((s[s.size() - 2] - '0') * 10 + (s[s.size() - 1] - '0'))] << '\n';
+    }
+    return 0x0;
+}
