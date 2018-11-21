@@ -1,0 +1,49 @@
+	
+//
+//  Datorii.cpp
+//  
+//
+//  Created by Raoul Bocancea on 21/11/2018.
+//
+ 
+#include <fstream>
+ 
+const std :: string programName = "datorii";
+std :: ifstream f(programName + ".in");
+std :: ofstream g(programName + ".out");
+ 
+const int NMAX = 15E3;
+int N, M, AIB[NMAX + 5];
+ 
+void Update(int, int);
+int Query(int);
+ 
+int main(void) {
+    f >> N >> M;
+    for (int i = 1; i <= N; ++i) {
+        int debt;
+        f >> debt;
+        Update(i, debt);
+    }
+    while (M--) {
+        int quest, x, y;
+        f >> quest >> x >> y;
+        if (quest == 0)
+            Update(x, -y);
+        if (quest == 1)
+            g << Query(y) - Query(x - 1) << '\n';
+    }
+    return 0x0;
+}
+ 
+void Update(int pos, int val) {
+    for (int i = pos; i <= N; i += (i & (- i)))
+        AIB[i] += val;
+}
+ 
+int Query(int index) {
+    int sum(0);
+    for (int i = index; i >= 1; i -= (i & (- i)))
+        sum += AIB[i];
+    return sum;
+}
